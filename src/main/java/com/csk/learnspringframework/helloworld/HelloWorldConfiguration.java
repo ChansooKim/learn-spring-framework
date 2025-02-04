@@ -1,7 +1,9 @@
-package com.csk.learnspringframework;
+package com.csk.learnspringframework.helloworld;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 
 record Person(String name, int age, Address address) { };
 record Address(String firstLine, String city) {};
@@ -34,12 +36,29 @@ public class HelloWorldConfiguration {
         return new Person(name, age, address2);
     }
 
+    @Bean
+    @Primary
+    /*No qualifying bean of type 'com.csk.learnspringframework.helloworld.Address' available
+    : expected single matching bean but found 2: address2,address3*/
+    public Person person4Parameters(String name, int age, Address address) {
+        // name, age, address2
+        return new Person(name, age, address);
+    }
+
+    @Bean
+    public Person person5Qualifier(String name, int age, @Qualifier("address3qualifier") Address address) {
+        // name, age, address2
+        return new Person(name, age, address);
+    }
+
     @Bean(name = "address2")    // name을 통해 원하는 BeanName을 지정
+    @Primary
     public Address address() {
         return new Address("Baker Street", "London");
     }
 
     @Bean(name = "address3")    // name을 통해 원하는 BeanName을 지정
+    @Qualifier("address3qualifier")
     public Address address3() {
         return new Address("Motinagar", "Hyderabad");
     }
